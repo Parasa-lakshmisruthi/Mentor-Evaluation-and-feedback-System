@@ -13,9 +13,7 @@ This is a complete web-based system where students submit feedback to their ment
 
 ## 🌐 Frontend
 - HTML + CSS + JS (no framework)
-- Hosted on: `https://mentor-feedback-system.s3.ap-south-1.amazonaws.com/combined.html`
-
-## ⚙️ Backend
+- Hosted on: https://mentor-feedback-system.s3.ap-south-1.amazonaws.com/combined.html
 - AWS Lambda function (Node.js)
 - Uses AWS SES to send emails to mentors.
 - CORS enabled and secured via IAM permissions.
@@ -34,5 +32,7 @@ This is a complete web-based system where students submit feedback to their ment
 
 ## ✉️ Contact
 For improvements or issues, open a GitHub issue or reach out.
+Email: sruthiparasa@gmail
+
 
 
