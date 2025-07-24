@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mentor Evaluation System</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container, .feedback-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 20px;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    h1, h2 {
+      color: #2d3748;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    h2 {
+      font-size: 2rem;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      color: #4a5568;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    
+    .form-group input, 
+    .form-group textarea, 
+    .form-group select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #f7fafc;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+    
+    .form-group input:focus, 
+    .form-group textarea:focus, 
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .file-input {
+      margin-bottom: 20px;
+      padding: 20px;
+      border: 2px dashed #cbd5e0;
+      border-radius: 12px;
+      text-align: center;
+      background: #f7fafc;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .file-input:hover {
+      border-color: #667eea;
+      background: #edf2f7;
+    }
+    
+    .file-input input[type="file"] {
+      display: none;
+    }
+    
+    .file-input-label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .thank-you {
+      display: none;
+      color: #38a169;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 30px;
+      padding: 20px;
+      background: #f0fff4;
+      border-radius: 12px;
+      border: 2px solid #9ae6b4;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .mentor-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+    
+    .mentor-card {
+      background: linear-gradient(135deg, #f7fafc, #edf2f7);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .mentor-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      border-color: #667eea;
+    }
+    
+    .mentor-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .mentor-card:hover img {
+      transform: scale(1.05);
+    }
+    
+    .mentor-card h3 {
+      color: #2d3748;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .mentor-card p {
+      color: #718096;
+      margin-bottom: 5px;
+      font-size: 0.95rem;
+    }
+    
+    .mentor-card .title {
+      color: #667eea;
+      font-weight: 600;
+    }
+    
+    .stars {
+      color: #f6ad55;
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    
+    .average {
+      margin-top: 10px;
+      color: #4a5568;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .demo-credentials {
+      background: #edf2f7;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .demo-credentials h4 {
+      color: #4a5568;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .demo-credentials p {
+      color: #718096;
+      margin: 5px 0;
+      font-family: monospace;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .success-message {
+      background: #f0fff4;
+      color: #38a169;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid #9ae6b4;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .header-actions {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    
+    .logout-btn {
+      background: #e53e3e;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logout-btn:hover {
+      background: #c53030;
+      transform: translateY(-2px);
+    }
+    
+    .back-btn {
+      background: #718096;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .back-btn:hover {
+      background: #4a5568;
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+      .container, .feedback-container {
+        padding: 25px;
+        margin: 10px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .mentor-card-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+      }
+      
+      .questions-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-actions {
+        position: static;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Page -->
+  <div class="container" id="loginPage">
+    <h1><i class="fas fa-graduation-cap"></i> Mentor Evaluation System</h1>
+    <p class="subtitle">Upload Excel file and login to continue</p>
+    
+    <div class="file-input" onclick="document.getElementById('excelUpload').click()">
+      <input type="file" id="excelUpload" accept=".xlsx, .xls"/>
+      <div class="file-input-label">
+        <i class="fas fa-upload"></i>
+        <span>Choose Excel File (.xlsx, .xls)</span>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-user"></i> Full Name</label>
+      <input type="text" id="nameInput" placeholder="Enter your full name" required />
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-key"></i> PIN</label>
+      <input type="text" id="pinInput" placeholder="Enter your PIN" required />
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-lock"></i> Password</label>
+      <input type="password" id="passwordInput" placeholder="Enter your password" required />
+    </div>
+    
+    <button class="btn" onclick="verifyLogin()">
+      <span id="loginText">Sign In</span>
+    </button>
+    
+    <div class="demo-credentials">
+      <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
+      <p>Name: Admin User</p>
+      <p>PIN: 0000</p>
+      <p>Password: admin</p>
+    </div>
+  </div>
+
+  <!-- Mentor Selection Page -->
+  <div class="container hidden" id="mentorPage">
+    <div class="header-actions">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </button>
+    </div>
+    
+    <h2><i class="fas fa-users"></i> Select Your Mentor</h2>
+    <p class="subtitle">Choose a mentor to provide feedback about</p>
+    
+    <div class="mentor-card-grid">
+      <div class="mentor-card" onclick="selectMentor('B.Harsha')">
+        <img src="https://mentor-feedback-system12.s3.ap-south-1.amazonaws.com/WhatsApp+Image+2025-07-03+at+15.13.05_7c97cad1.jpg" alt="B.Harsha" />
+        <h3>B.Harsha</h3>
+        <p class="title">RedHat Trainer</p>
+        <p>Mobile App Development Trainer</p>
+        <div class="stars">★★★★★</div>
+        <div class="average" id="avg-B-Harsha">Loading...</div>
+      </div>
+      
+      <div class="mentor-card" onclick="selectMentor('K.SuryaNarayana')">
+        <img src="https://mentor-feedback-system12.s3.ap-south-1.amazonaws.com/WhatsApp+Image+2025-07-03+at+15.13.06_93b2cbd2.jpg" alt="K.SuryaNarayana" />
+        <h3>K.SuryaNarayana</h3>
+        <p class="title">Full Stack Trainer</p>
+        <p>Java Trainer</p>
+        <div class="stars">★★★★★</div>
+        <div class="average" id="avg-K-SuryaNarayana">Loading...</div>
+      </div>
+      
+      <div class="mentor-card" onclick="selectMentor('S.Durga Prasad')">
+        <img src="https://mentor-feedback-system12.s3.ap-south-1.amazonaws.com/WhatsApp+Image+2025-07-03+at+15.13.06_b9f28e7d.jpg" alt="S.Durga Prasad" />
+        <h3>S.Durga Prasad</h3>
+        <p class="title">UI/UX Trainer</p>
+        <p>GEN AI Trainer</p>
+        <div class="stars">★★★★★</div>
+        <div class="average" id="avg-S-Durga-Prasad">Loading...</div>
+      </div>
+      
+      <div class="mentor-card" onclick="selectMentor('Siva Sankar Ramadev')">
+        <img src="https://mentor-feedback-system12.s3.ap-south-1.amazonaws.com/WhatsApp+Image+2025-07-03+at+15.13.07_f37698cf.jpg" alt="Siva Sankar Ramadev" />
+        <h3>Siva Sankar Ramadev</h3>
+        <p class="title">HR & Technical Trainer</p>
+        <p>AWS Trainer</p>
+        <div class="stars">★★★★★</div>
+        <div class="average" id="avg-Siva-Sankar-Ramadev">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Page -->
+  <div class="feedback-container hidden" id="feedbackPage">
+    <button class="back-btn" onclick="backToMentors()">
+      <i class="fas fa-arrow-left"></i>
+      Back to Mentors
+    </button>
+    
+    <h2><i class="fas fa-comment-alt"></i> Feedback Form for <span id="mentorName"></span></h2>
+    <p class="subtitle">Please rate your mentor on the following criteria</p>
+    
+    <form id="feedbackForm">
+      <div class="questions-grid" id="questionsContainer"></div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-comments"></i> Additional Comments</label>
+        <textarea id="comments" rows="4" placeholder="Share any additional feedback or suggestions..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-heart"></i> Personal Message to Mentor (optional)</label>
+        <textarea id="message" rows="3" placeholder="Write a personal message to your mentor..."></textarea>
+      </div>
+      
+      <button type="submit" class="btn">
+        <span id="submitText"><i class="fas fa-paper-plane"></i> Submit Feedback</span>
+      </button>
+    </form>
+    
+    <div class="thank-you" id="thankYouMessage">
+      <i class="fas fa-check-circle"></i> Thank you for your feedback!
+      <br><br>
+      <button class="btn" onclick="backToMentors()" style="max-width: 200px; margin: 0 auto;">
+        Back to Mentors
+      </button>
+    </div>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    let excelData = [];
+    let currentUser = null;
+    
+    const questions = [
+      "Punctuality", "Clarity in concepts", "Availability", "Motivation",
+      "Communication", "Understanding issues", "Career guidance",
+      "Follow-up", "Project support", "Overall experience"
+    ];
+
+    // Lambda URLs
+    const GET_AVERAGES_LAMBDA_URL = "https://j7vnnsixkaphne5hl75lgod72q0cpkye.lambda-url.ap-south-1.on.aws/";
+    const SUBMIT_FEEDBACK_LAMBDA_URL = "https://ptsvo4zf3uus4aucdqpvalumxa0hpgnd.lambda-url.ap-south-1.on.aws/";
+
+    // Default users for demo
+    const defaultUsers = [
+      { Name: 'Admin User', PIN: '0000', Password: 'admin' },
+      { Name: 'John Doe', PIN: '1234', Password: 'password123' },
+      { Name: 'Jane Smith', PIN: '5678', Password: 'pass456' }
+    ];
+
+    // Load mentor averages
+    async function loadMentorAverages() {
+      console.log("Loading mentor averages from:", GET_AVERAGES_LAMBDA_URL);
+      try {
+        const response = await fetch(GET_AVERAGES_LAMBDA_URL, {
+          method: "GET",
+          mode: "cors"
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const averages = await response.json();
+        console.log("Fetched averages:", averages);
+
+        // Update mentor cards with averages
+        const mentorNames = ['B.Harsha', 'K.SuryaNarayana', 'S.Durga Prasad', 'Siva Sankar Ramadev'];
+        
+        mentorNames.forEach(name => {
+          const id = `avg-${name.replace(/\s+/g, '-').replace(/\./g, '-')}`;
+          const avgElement = document.getElementById(id);
+          
+          if (avgElement) {
+            const averageValue = averages[name] || 'N/A';
+            avgElement.innerHTML = `⭐ Average Rating: <strong>${averageValue}</strong>`;
+          }
+        });
+
+      } catch (error) {
+        console.error("Error loading averages:", error);
+        document.querySelectorAll('.average').forEach(el => {
+          el.innerHTML = `⭐ Average Rating: <strong>Error</strong>`;
+        });
+      }
+    }
+
+    // File upload handler
+    document.getElementById("excelUpload").addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const sheet = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheet];
+          excelData = XLSX.utils.sheet_to_json(worksheet);
+          
+          if (excelData.length === 0) {
+            excelData = [...defaultUsers];
+          }
+          
+          showSuccessMessage("Excel loaded successfully ✅");
+        } catch (error) {
+          console.error('Error processing file:', error);
+          alert('Error processing Excel file. Please check the format.');
+          excelData = [...defaultUsers];
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    function showSuccessMessage(message) {
+      const existingMessage = document.querySelector('.success-message');
+      if (existingMessage) {
+        existingMessage.remove();
+      }
+      
+      const successDiv = document.createElement('div');
+      successDiv.className = 'success-message';
+      successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+      document.querySelector('.file-input').appendChild(successDiv);
+      
+      setTimeout(() => {
+        if (successDiv.parentNode) {
+          successDiv.remove();
+        }
+      }, 3000);
+    }
+
+    function verifyLogin() {
+      const name = document.getElementById("nameInput").value.trim();
+      const pin = document.getElementById("pinInput").value.trim();
+      const password = document.getElementById("passwordInput").value.trim();
+      
+      if (!name || !pin || !password) {
+        alert('Please fill in all fields');
+        return;
+      }
+      
+      const loginBtn = document.querySelector('#loginPage .btn');
+      const loginText = document.getElementById('loginText');
+      
+      loginText.innerHTML = '<span class="loading"></span>Signing In...';
+      loginBtn.disabled = true;
+      
+      setTimeout(() => {
+        const userData = excelData.length > 0 ? excelData : defaultUsers;
+        
+        const user = userData.find(u =>
+          u.Name?.toLowerCase().trim() === name.toLowerCase() &&
+          u.PIN?.toString().trim() === pin &&
+          u.Password?.toString().trim() === password
+        );
+
+        if (user) {
+          currentUser = user;
+          document.getElementById("loginPage").classList.add("hidden");
+          document.getElementById("mentorPage").classList.remove("hidden");
+          loadMentorAverages();
+        } else {
+          alert("Invalid credentials ❌\n\nTry demo credentials:\nName: Admin User\nPIN: 0000\nPassword: admin");
+        }
+        
+        loginText.innerHTML = 'Sign In';
+        loginBtn.disabled = false;
+      }, 1000);
+    }
+
+    function logout() {
+      currentUser = null;
+      excelData = [];
+      document.getElementById("mentorPage").classList.add("hidden");
+      document.getElementById("feedbackPage").classList.add("hidden");
+      document.getElementById("loginPage").classList.remove("hidden");
+      
+      // Reset form
+      document.getElementById("nameInput").value = '';
+      document.getElementById("pinInput").value = '';
+      document.getElementById("passwordInput").value = '';
+      
+      // Remove success message if exists
+      const successMessage = document.querySelector('.success-message');
+      if (successMessage) {
+        successMessage.remove();
+      }
+    }
+
+    function selectMentor(name) {
+      document.getElementById("mentorPage").classList.add("hidden");
+      document.getElementById("feedbackPage").classList.remove("hidden");
+      document.getElementById("mentorName").textContent = name;
+
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      questions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.className = "form-group";
+        div.innerHTML = `
+          <label for="q${i + 1}">${i + 1}. ${q}</label>
+          <select id="q${i + 1}" required>
+            <option value="">-- Select Rating --</option>
+            <option value="1">1 - Poor</option>
+            <option value="2">2 - Fair</option>
+            <option value="3">3 - Good</option>
+            <option value="4">4 - Very Good</option>
+            <option value="5">5 - Excellent</option>
+          </select>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function backToMentors() {
+      document.getElementById("feedbackPage").classList.add("hidden");
+      document.getElementById("mentorPage").classList.remove("hidden");
+      document.getElementById("feedbackForm").style.display = "block";
+      document.getElementById("thankYouMessage").style.display = "none";
+      document.getElementById("feedbackForm").reset();
+      loadMentorAverages();
+    }
+
+    // Feedback form submission
+    document.getElementById("feedbackForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const submitBtn = document.querySelector('#feedbackForm .btn');
+      const submitText = document.getElementById('submitText');
+      
+      submitText.innerHTML = '<span class="loading"></span>Submitting...';
+      submitBtn.disabled = true;
+
+      const mentorName = document.getElementById("mentorName").textContent;
+      const feedback = {};
+
+      // Validate all questions are answered
+      let allAnswered = true;
+      for (let i = 0; i < questions.length; i++) {
+        const value = document.getElementById(`q${i + 1}`).value;
+        if (!value) {
+          allAnswered = false;
+          break;
+        }
+        feedback[questions[i]] = value;
+      }
+
+      if (!allAnswered) {
+        alert("Please answer all questions before submitting.");
+        submitText.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+        submitBtn.disabled = false;
+        return;
+      }
+
+      feedback["Additional Comments"] = document.getElementById("comments").value;
+      feedback["Personal Message"] = document.getElementById("message").value;
+
+      try {
+        const response = await fetch(SUBMIT_FEEDBACK_LAMBDA_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            mentorName: mentorName,
+            feedback: feedback,
+            submittedBy: currentUser?.Name || 'Anonymous',
+            timestamp: new Date().toISOString()
+          })
+        });
+
+        console.log("Response status:", response.status);
+        
+        if (response.ok) {
+          try {
+            const result = await response.json();
+            console.log("Response:", result);
+          } catch (jsonError) {
+            console.log("Response is not JSON, treating as success");
+          }
+          
+          document.getElementById("feedbackForm").style.display = "none";
+          document.getElementById("thankYouMessage").style.display = "block";
+        } else {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+      } catch (err) {
+        console.error("Submission Error:", err);
+        alert("❌ Submission failed. Please check your connection and try again.");
+      } finally {
+        submitText.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        const visibleForm = document.querySelector('form:not(.hidden)');
+        if (visibleForm) {
+          visibleForm.dispatchEvent(new Event('submit'));
+        }
+      }
+    });
+
+    // Initialize with default users
+    excelData = [...defaultUsers];
+  </script>
+</body>
+</html>
